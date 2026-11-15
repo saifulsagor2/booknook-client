@@ -2,7 +2,10 @@ import { NextResponse, type NextRequest } from "next/server";
 import { API_BASE_URL } from "@/lib/api";
 
 function redirectToLogin(request: NextRequest) {
-  return NextResponse.redirect(new URL("/login", request.url));
+  const loginUrl = new URL("/login", request.url);
+  const callbackURL = `${request.nextUrl.pathname}${request.nextUrl.search}`;
+  loginUrl.searchParams.set("callbackURL", callbackURL);
+  return NextResponse.redirect(loginUrl);
 }
 
 export async function proxy(request: NextRequest) {

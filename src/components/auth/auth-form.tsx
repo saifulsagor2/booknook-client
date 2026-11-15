@@ -10,6 +10,26 @@ type AuthFormProps = {
   mode: "login" | "register";
 };
 
+function getCallbackPath() {
+  const defaultPath = "/profile";
+  const callbackURL = new URLSearchParams(window.location.search).get(
+    "callbackURL",
+  );
+  if (!callbackURL) {
+    return defaultPath;
+  }
+
+  try {
+    const url = new URL(callbackURL, window.location.origin);
+    if (url.origin !== window.location.origin) {
+      return defaultPath;
+    }
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return defaultPath;
+  }
+}
+
 export function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const isRegister = mode === "register";
@@ -29,7 +49,8 @@ export function AuthForm({ mode }: AuthFormProps) {
     const formData = new FormData(event.currentTarget);
     const email = String(formData.get("email")).trim();
     const password = String(formData.get("password"));
-    const callbackURL = `${window.location.origin}/profile`;
+    const callbackPath = getCallbackPath();
+    const callbackURL = new URL(callbackPath, window.location.origin).href;
 
     if (isRegister) {
       const name = String(formData.get("name")).trim();
@@ -54,8 +75,8 @@ export function AuthForm({ mode }: AuthFormProps) {
         }
 
         setMessageType("success");
-        setMessage("Your account is ready. Taking you to your profile…");
-        router.replace("/profile");
+        setMessage("Your account is ready. Taking you there…");
+        router.replace(callbackPath);
         router.refresh();
       } catch {
         showError("We couldn't create your account. Please try again.");
@@ -79,8 +100,8 @@ export function AuthForm({ mode }: AuthFormProps) {
       }
 
       setMessageType("success");
-      setMessage("Welcome back. Taking you to your profile…");
-      router.replace("/profile");
+      setMessage("Welcome back. Taking you there…");
+      router.replace(callbackPath);
       router.refresh();
     } catch {
       showError("We couldn't sign you in. Please check your connection and try again.");
@@ -92,11 +113,15 @@ export function AuthForm({ mode }: AuthFormProps) {
   const handleGoogleSignIn = async () => {
     setMessage("");
     setIsLoading(true);
+    const callbackURL = new URL(
+      getCallbackPath(),
+      window.location.origin,
+    ).href;
 
     try {
       const { error } = await authClient.signIn.social({
         provider: "google",
-        callbackURL: `${window.location.origin}/profile`,
+        callbackURL,
       });
       if (error) {
         showError(error.message || "Google sign-in is unavailable.");
@@ -256,6 +281,14 @@ export function AuthForm({ mode }: AuthFormProps) {
         <Link
           className="font-semibold text-brand underline-offset-4 hover:underline"
           href={isRegister ? "/login" : "/register"}
+          onClick={(event) => {
+            event.preventDefault();
+            const callbackPath = getCallbackPath();
+            const search = new URLSearchParams({ callbackURL: callbackPath });
+            router.push(
+              `${isRegister ? "/login" : "/register"}?${search.toString()}`,
+            );
+          }}
         >
           {isRegister ? "Log in" : "Create an account"}
         </Link>
