@@ -46,7 +46,7 @@ There is no separate frontend unit-test script in this repository.
 
 ## Deployment
 
-Deploy this app to a Next.js-compatible hosting service. Set `NEXT_PUBLIC_API_URL` to the public Express API origin before building. On the backend, set `CLIENT_URL` to the exact deployed frontend origin and `BETTER_AUTH_URL` to the public backend origin. Configure the Google OAuth callback as `${BETTER_AUTH_URL}/api/auth/callback/google` when Google sign-in is enabled.
+For Vercel, import the `booknook-client` repository as a Next.js project and use the standard `npm run build` build command. Set `NEXT_PUBLIC_API_URL` to the public backend origin in the Vercel project environment settings for each deployment environment, then redeploy so the value is included in the build. On the backend, set `CLIENT_URL` to the exact deployed frontend origin and `BETTER_AUTH_URL` to the public backend origin. Configure the Google OAuth callback as `${BETTER_AUTH_URL}/api/auth/callback/google` when Google sign-in is enabled.
 
 `NEXT_PUBLIC_API_URL` is public and must not contain credentials. Keep MongoDB and Better Auth secrets only in the backend environment. This repository has no provider-specific deployment configuration, and a production deployment has not been verified.
 
