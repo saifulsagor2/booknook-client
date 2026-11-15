@@ -1,5 +1,9 @@
 import { BookDetails } from "@/components/books/book-details";
 
+export const metadata = {
+  title: "Book details",
+};
+
 type BookDetailsPageProps = {
   params: Promise<{ id: string }>;
 };
