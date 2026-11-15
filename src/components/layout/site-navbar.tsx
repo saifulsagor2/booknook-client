@@ -8,6 +8,7 @@ import { authClient } from "@/lib/auth-client";
 
 const navigation = [
   { href: "/#discover", label: "Discover" },
+  { href: "/catalog", label: "Borrow books" },
   { href: "/#about", label: "Our nook" },
 ];
 
@@ -72,6 +73,12 @@ export function SiteNavbar() {
       >
         My books
       </Link>
+      <Link
+        className="rounded-full px-3 py-2 text-sm font-medium text-muted hover:bg-[#edf0e9] hover:text-brand"
+        href="/my-borrows"
+      >
+        My borrows
+      </Link>
       <button
         className="rounded-full border border-line px-4 py-2 text-sm font-semibold text-brand transition hover:border-brand disabled:cursor-not-allowed disabled:opacity-60"
         disabled={isSigningOut}
@@ -117,7 +124,7 @@ export function SiteNavbar() {
           </span>
         </Link>
 
-        <nav aria-label="Main navigation" className="hidden items-center gap-8 md:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-3 lg:flex">
           {navigation.map((item) => (
             <Link
               className="text-sm font-medium text-muted transition hover:text-brand"
@@ -140,7 +147,7 @@ export function SiteNavbar() {
           aria-controls="mobile-navigation"
           aria-expanded={mobileMenuOpen}
           aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-          className="grid h-11 w-11 place-items-center rounded-full border border-line text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand md:hidden"
+          className="grid h-11 w-11 place-items-center rounded-full border border-line text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand lg:hidden"
           onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
           type="button"
         >
@@ -179,7 +186,7 @@ export function SiteNavbar() {
       {mobileMenuOpen && (
         <nav
           aria-label="Mobile navigation"
-          className="border-t border-line bg-white py-3 md:hidden"
+          className="border-t border-line bg-white py-3 lg:hidden"
           id="mobile-navigation"
         >
           <Container className="flex flex-col gap-1">
@@ -195,6 +202,13 @@ export function SiteNavbar() {
             ))}
             {session && (
               <>
+                <Link
+                  className="rounded-xl px-4 py-3 text-sm font-medium text-foreground hover:bg-[#f0f1e9]"
+                  href="/my-books"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My books
+                </Link>
                 <Link
                   className="rounded-xl px-4 py-3 text-sm font-medium text-foreground hover:bg-[#f0f1e9]"
                   href="/my-borrows"

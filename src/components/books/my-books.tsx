@@ -139,6 +139,8 @@ export function MyBooks() {
                       author: book.author,
                       category: book.category,
                       description: book.description,
+                      availableCopies: book.availableCopies,
+                      isShared: book.isShared,
                     }}
                     onCancel={() => setEditingBookId(null)}
                     onSubmit={(values) => handleUpdate(book.id, values)}
@@ -155,6 +157,11 @@ export function MyBooks() {
                           {book.title}
                         </h2>
                         <p className="mt-1 text-sm text-muted">by {book.author}</p>
+                        <p className="mt-3 text-xs font-medium text-muted">
+                          {book.isShared
+                            ? `Shared in catalog · ${book.availableCopies} available`
+                            : "Private · not in the borrow catalog"}
+                        </p>
                       </div>
                       <div className="flex gap-2">
                         <button

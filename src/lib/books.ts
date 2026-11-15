@@ -6,12 +6,15 @@ export type BookInput = {
   author: string;
   category: string;
   description: string;
+  availableCopies: number;
+  isShared: boolean;
 };
 
 export type Book = BookInput & {
   id: string;
   createdAt: string;
   updatedAt: string;
+  canBorrow: boolean;
 };
 
 async function requestBooks(path: string, init?: RequestInit) {
@@ -44,6 +47,24 @@ export async function getBooks(): Promise<Book[]> {
     throw new Error("The BookNook API returned an invalid book list.");
   }
   return result.books;
+}
+
+export async function getCatalogBooks(): Promise<Book[]> {
+  const response = await requestBooks("/catalog");
+  const result = (await response.json()) as { books?: Book[] };
+  if (!Array.isArray(result.books)) {
+    throw new Error("The BookNook API returned an invalid catalog.");
+  }
+  return result.books;
+}
+
+export async function getCatalogBook(id: string): Promise<Book> {
+  const response = await requestBooks(`/catalog/${encodeURIComponent(id)}`);
+  const result = (await response.json()) as { book?: Book };
+  if (!result.book?.id) {
+    throw new Error("The BookNook API returned an invalid book.");
+  }
+  return result.book;
 }
 
 export async function createBook(input: BookInput): Promise<Book> {

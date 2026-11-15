@@ -17,7 +17,7 @@ The Express server handles Better Auth. Configure its `BETTER_AUTH_SECRET`, `BET
 
 The login and registration pages use email/password and Google sign-in. Protected pages validate the Better Auth session with the backend before rendering. The profile page also demonstrates a JWT-authenticated request to `GET /api/me`.
 
-The protected **My Books** page lists, edits, and removes books from the signed-in user's shelf. Use **Add a book** to create an entry; book data is sent to the backend with the current Better Auth JWT.
+The protected **My Books** page lists, edits, and removes books from the signed-in user's shelf. Books stay private unless their owner enables catalog sharing and sets available copies. Browse shared books, borrow from a book's details page, and manage active or returned loans on **My Borrows**.
 
 First, run the development server:
 

@@ -33,6 +33,8 @@ export function BookForm({
       author: String(formData.get("author")).trim(),
       category: String(formData.get("category")).trim(),
       description: String(formData.get("description")).trim(),
+      availableCopies: Number(formData.get("availableCopies")),
+      isShared: formData.get("isShared") === "on",
     };
 
     try {
@@ -101,6 +103,34 @@ export function BookForm({
           defaultValue={initialValues?.description ?? ""}
         />
       </label>
+      <div className="grid gap-5 rounded-2xl bg-[#f8f7f2] p-4 sm:grid-cols-[minmax(0,1fr)_12rem] sm:items-center">
+        <label className="flex items-start gap-3 text-sm font-medium text-brand-dark">
+          <input
+            className="mt-1 h-4 w-4 accent-[#315c4a]"
+            name="isShared"
+            type="checkbox"
+            defaultChecked={initialValues?.isShared ?? false}
+          />
+          <span>
+            Share in the borrow catalog
+            <span className="mt-1 block font-normal leading-6 text-muted">
+              Your book stays private unless you enable sharing.
+            </span>
+          </span>
+        </label>
+        <label className="block text-sm font-medium text-brand-dark">
+          Available copies
+          <input
+            className={fieldClassName}
+            max={10000}
+            min={0}
+            name="availableCopies"
+            required
+            type="number"
+            defaultValue={initialValues?.availableCopies ?? 1}
+          />
+        </label>
+      </div>
 
       {error && (
         <p className="rounded-xl bg-[#fff0ed] px-4 py-3 text-sm text-[#913f31]" role="alert">
