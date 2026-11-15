@@ -13,6 +13,10 @@ if (-not (Test-Path .env.local)) { Copy-Item .env.example .env.local }
 
 Set `NEXT_PUBLIC_API_URL` to the backend origin. It defaults to `http://localhost:8000` for local development. This value is public and must not contain credentials or server secrets.
 
+The Express server handles Better Auth. Configure its `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and optional Google OAuth credentials in the server's private `.env` file. Never put those values in the client project.
+
+The login and registration pages use email/password and Google sign-in. Protected pages validate the Better Auth session with the backend before rendering. The profile page also demonstrates a JWT-authenticated request to `GET /api/me`.
+
 First, run the development server:
 
 ```bash
