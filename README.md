@@ -1,6 +1,6 @@
 # BookNook Client
 
-The BookNook frontend is a Next.js App Router application styled with Tailwind CSS. Its UI is organized into reusable `layout`, `books`, and `ui` components, keeping the client separate from the Express backend.
+The BookNook frontend is a Next.js App Router application built with TypeScript, React, and Tailwind CSS. Its UI is organized into reusable `layout`, `books`, `auth`, and `ui` components. It is deployed and versioned separately from the Express backend.
 
 ## Getting Started
 
@@ -15,11 +15,11 @@ Set `NEXT_PUBLIC_API_URL` to the backend origin. It defaults to `http://localhos
 
 The Express server handles Better Auth. Configure its `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and optional Google OAuth credentials in the server's private `.env` file. Never put those values in the client project.
 
-The login and registration pages use email/password and Google sign-in. Protected pages validate the Better Auth session with the backend before rendering. The profile page also demonstrates a JWT-authenticated request to `GET /api/me`.
+The login and registration pages use email/password and Google sign-in. Google authentication can succeed only when both provider credentials are configured in the backend. Protected pages validate the Better Auth session with the backend before rendering. The profile page also demonstrates a JWT-authenticated request to `GET /api/me`.
 
 The protected **My Books** page lists, edits, and removes books from the signed-in user's shelf. Books stay private unless their owner enables catalog sharing and sets available copies. Browse shared books, borrow from a book's details page, and manage active or returned loans on **My Borrows**.
 
-First, run the development server:
+Run the development server:
 
 ```bash
 npm run dev
@@ -27,8 +27,29 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Build
+## Quality checks and production
+
+Run ESLint and create a production build:
 
 ```bash
+npm run lint
 npm run build
 ```
+
+`npm run build` also runs the Next.js TypeScript check. To serve the built app with Node.js, run:
+
+```bash
+npm start
+```
+
+There is no separate frontend unit-test script in this repository.
+
+## Deployment
+
+Deploy this app to a Next.js-compatible hosting service. Set `NEXT_PUBLIC_API_URL` to the public Express API origin before building. On the backend, set `CLIENT_URL` to the exact deployed frontend origin and `BETTER_AUTH_URL` to the public backend origin. Configure the Google OAuth callback as `${BETTER_AUTH_URL}/api/auth/callback/google` when Google sign-in is enabled.
+
+`NEXT_PUBLIC_API_URL` is public and must not contain credentials. Keep MongoDB and Better Auth secrets only in the backend environment. This repository has no provider-specific deployment configuration, and a production deployment has not been verified.
+
+## Image hosting
+
+Book image upload and image-hosting integration are not implemented. There is no image provider configured or image credential to add to this frontend.
