@@ -1,4 +1,3 @@
-import { API_BASE_URL } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 
 export type BookInput = {
@@ -29,7 +28,7 @@ async function requestBooks(path: string, init?: RequestInit) {
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/books${path}`, {
+  const response = await fetch(`/api/books${path}`, {
     ...init,
     headers,
   });

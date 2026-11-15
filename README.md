@@ -13,7 +13,7 @@ if (-not (Test-Path .env.local)) { Copy-Item .env.example .env.local }
 
 Set `NEXT_PUBLIC_API_URL` to the backend origin. It defaults to `http://localhost:8000` only during local development. Production builds do not fall back to localhost, so configure this variable in Vercel before building. This value is public and must not contain credentials or server secrets.
 
-The Express server handles Better Auth. Configure its `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and optional Google OAuth credentials in the server's private `.env` file. Never put those values in the client project.
+The Express server handles Better Auth. Configure its `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and optional Google OAuth credentials in the server's private `.env` file. Never put those values in the client project. Browser API and authentication calls use same-origin `/api/*` routes, which Next.js rewrites to the configured backend origin.
 
 The login and registration pages use email/password and Google sign-in. Google authentication can succeed only when both provider credentials are configured in the backend. Protected pages validate the Better Auth session with the backend before rendering. The profile page also demonstrates a JWT-authenticated request to `GET /api/me`.
 
@@ -46,7 +46,7 @@ There is no separate frontend unit-test script in this repository.
 
 ## Deployment
 
-For Vercel, import the `booknook-client` repository as a Next.js project using the repository root and the standard `npm run build` build command. Set `NEXT_PUBLIC_API_URL` to the public backend origin in the Vercel project environment settings for every deployment environment, then redeploy so the value is included in the build. No credentials belong in this public variable. On the backend, set `CLIENT_URL` to the exact deployed frontend origin and `BETTER_AUTH_URL` to the public backend origin. Configure the Google OAuth callback as `${BETTER_AUTH_URL}/api/auth/callback/google` when Google sign-in is enabled.
+For Vercel, import the `booknook-client` repository as a Next.js project using the repository root and the standard `npm run build` build command. Set `NEXT_PUBLIC_API_URL` to the public Render backend origin in the Vercel project environment settings for the Production environment, then redeploy so the value is included in the rewrite configuration. Browser requests use same-origin `/api/*` routes, helping session cookies work across hosting providers. No credentials belong in this public variable. In Render, set both `CLIENT_URL` and `BETTER_AUTH_URL` to the exact public Vercel frontend origin. Configure the Google OAuth callback as `${BETTER_AUTH_URL}/api/auth/callback/google` when Google sign-in is enabled.
 
 `NEXT_PUBLIC_API_URL` is public and must not contain credentials. Keep MongoDB and Better Auth secrets only in the backend environment. This repository has no provider-specific deployment configuration, and a production deployment has not been verified.
 

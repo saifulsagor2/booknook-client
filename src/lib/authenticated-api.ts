@@ -1,4 +1,3 @@
-import { API_BASE_URL } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 
 export type AuthenticatedUser = {
@@ -14,7 +13,7 @@ export async function getAuthenticatedUser(): Promise<AuthenticatedUser> {
     throw new Error("Your session could not be verified. Please sign in again.");
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/me`, {
+  const response = await fetch("/api/me", {
     headers: {
       Authorization: `Bearer ${data.token}`,
     },

@@ -1,4 +1,3 @@
-import { API_BASE_URL } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 
 export type Borrow = {
@@ -27,7 +26,7 @@ async function requestBorrows(path: string, init?: RequestInit): Promise<Respons
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/borrows${path}`, {
+  const response = await fetch(`/api/borrows${path}`, {
     ...init,
     headers,
   });
