@@ -11,7 +11,7 @@ npm install
 if (-not (Test-Path .env.local)) { Copy-Item .env.example .env.local }
 ```
 
-Set `NEXT_PUBLIC_API_URL` to the backend origin. It defaults to `http://localhost:8000` for local development. This value is public and must not contain credentials or server secrets.
+Set `NEXT_PUBLIC_API_URL` to the backend origin. It defaults to `http://localhost:8000` only during local development. Production builds do not fall back to localhost, so configure this variable in Vercel before building. This value is public and must not contain credentials or server secrets.
 
 The Express server handles Better Auth. Configure its `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and optional Google OAuth credentials in the server's private `.env` file. Never put those values in the client project.
 
@@ -46,9 +46,20 @@ There is no separate frontend unit-test script in this repository.
 
 ## Deployment
 
-For Vercel, import the `booknook-client` repository as a Next.js project and use the standard `npm run build` build command. Set `NEXT_PUBLIC_API_URL` to the public backend origin in the Vercel project environment settings for each deployment environment, then redeploy so the value is included in the build. On the backend, set `CLIENT_URL` to the exact deployed frontend origin and `BETTER_AUTH_URL` to the public backend origin. Configure the Google OAuth callback as `${BETTER_AUTH_URL}/api/auth/callback/google` when Google sign-in is enabled.
+For Vercel, import the `booknook-client` repository as a Next.js project using the repository root and the standard `npm run build` build command. Set `NEXT_PUBLIC_API_URL` to the public backend origin in the Vercel project environment settings for every deployment environment, then redeploy so the value is included in the build. No credentials belong in this public variable. On the backend, set `CLIENT_URL` to the exact deployed frontend origin and `BETTER_AUTH_URL` to the public backend origin. Configure the Google OAuth callback as `${BETTER_AUTH_URL}/api/auth/callback/google` when Google sign-in is enabled.
 
 `NEXT_PUBLIC_API_URL` is public and must not contain credentials. Keep MongoDB and Better Auth secrets only in the backend environment. This repository has no provider-specific deployment configuration, and a production deployment has not been verified.
+
+### Post-deployment verification
+
+These are checks to perform after deploying; production behavior has not yet been verified:
+
+- Open the homepage, then directly open and refresh `/catalog` and a valid `/books/<id>` URL.
+- Confirm signed-out visits to `/my-books`, `/my-borrows`, and `/profile` redirect to login; sign in and confirm those pages load.
+- Register and log in with a disposable test account. Confirm the browser's network requests use the configured backend origin and do not report CORS or authentication errors.
+- Create, edit, and delete an owned book. Confirm another account cannot edit or delete it.
+- Borrow a shared book; verify the available-copy count decreases and a second active borrow is rejected. Return the book and verify the count is restored.
+- Confirm **My Books** and **My Borrows** show the expected records and history.
 
 ## Image hosting
 
