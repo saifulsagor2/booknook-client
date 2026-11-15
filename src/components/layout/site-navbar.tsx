@@ -35,6 +35,7 @@ export function SiteNavbar() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState("");
 
@@ -50,6 +51,7 @@ export function SiteNavbar() {
       }
 
       setMobileMenuOpen(false);
+      setProfileMenuOpen(false);
       router.replace("/");
       router.refresh();
     } catch {
@@ -61,12 +63,67 @@ export function SiteNavbar() {
 
   const accountLinks = session ? (
     <>
-      <Link
-        className="rounded-full px-3 py-2 text-sm font-medium text-brand hover:bg-[#edf0e9]"
-        href="/profile"
-      >
-        {session.user.name || session.user.email}
-      </Link>
+      <div className="relative">
+        <button
+          aria-controls="profile-menu"
+          aria-expanded={profileMenuOpen}
+          className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-brand hover:bg-[#edf0e9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          onClick={() => setProfileMenuOpen((isOpen) => !isOpen)}
+          type="button"
+        >
+          {session.user.name || session.user.email}
+          <svg
+            aria-hidden="true"
+            className={`h-4 w-4 transition-transform ${profileMenuOpen ? "rotate-180" : ""}`}
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.7"
+            />
+          </svg>
+        </button>
+        {profileMenuOpen && (
+          <div
+            aria-label="Profile options"
+            className="absolute right-0 top-full z-50 mt-2 w-64 rounded-2xl border border-line bg-white p-2 shadow-xl"
+            id="profile-menu"
+          >
+            <div className="border-b border-line px-3 py-3">
+              <p className="font-semibold text-brand-dark">
+                {session.user.name || "BookNook reader"}
+              </p>
+              <p className="mt-1 break-all text-xs text-muted">
+                {session.user.email}
+              </p>
+            </div>
+            <Link
+              className="block rounded-xl px-3 py-2.5 text-sm font-medium text-foreground hover:bg-[#f0f1e9]"
+              href="/profile"
+              onClick={() => setProfileMenuOpen(false)}
+            >
+              My profile
+            </Link>
+            <button
+              className="w-full rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-brand hover:bg-[#f0f1e9] disabled:opacity-60"
+              disabled={isSigningOut}
+              onClick={handleSignOut}
+              type="button"
+            >
+              {isSigningOut ? "Signing out…" : "Log out"}
+            </button>
+            {signOutError && (
+              <p className="px-3 py-2 text-sm text-red-700" role="alert">
+                {signOutError}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
       <Link
         className="rounded-full px-3 py-2 text-sm font-medium text-muted hover:bg-[#edf0e9] hover:text-brand"
         href="/my-books"
@@ -79,14 +136,6 @@ export function SiteNavbar() {
       >
         My borrows
       </Link>
-      <button
-        className="rounded-full border border-line px-4 py-2 text-sm font-semibold text-brand transition hover:border-brand disabled:cursor-not-allowed disabled:opacity-60"
-        disabled={isSigningOut}
-        onClick={handleSignOut}
-        type="button"
-      >
-        {isSigningOut ? "Signing out…" : "Log out"}
-      </button>
     </>
   ) : (
     <>
