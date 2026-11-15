@@ -12,6 +12,7 @@ export function MyBooks() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [editingBookId, setEditingBookId] = useState<string | null>(null);
+  const [confirmingBookId, setConfirmingBookId] = useState<string | null>(null);
   const [deletingBookId, setDeletingBookId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -52,10 +53,6 @@ export function MyBooks() {
   };
 
   const handleDelete = async (book: Book) => {
-    if (!window.confirm(`Remove "${book.title}" from your shelf?`)) {
-      return;
-    }
-
     setDeletingBookId(book.id);
     setError("");
     setNotice("");
@@ -178,10 +175,14 @@ export function MyBooks() {
                         <button
                           className="min-h-10 rounded-full border border-[#f0d7d1] px-4 py-2 text-sm font-semibold text-[#913f31] transition hover:bg-[#fff0ed] disabled:cursor-not-allowed disabled:opacity-60"
                           disabled={deletingBookId === book.id}
-                          onClick={() => void handleDelete(book)}
+                          onClick={() => {
+                            setError("");
+                            setNotice("");
+                            setConfirmingBookId(book.id);
+                          }}
                           type="button"
                         >
-                          {deletingBookId === book.id ? "Removing..." : "Remove"}
+                          Remove
                         </button>
                       </div>
                     </div>
@@ -189,6 +190,37 @@ export function MyBooks() {
                       <p className="mt-5 border-t border-line pt-4 text-sm leading-6 text-muted">
                         {book.description}
                       </p>
+                    )}
+                    {confirmingBookId === book.id && (
+                      <div
+                        aria-labelledby={`remove-book-${book.id}`}
+                        className="mt-6 rounded-2xl border border-[#f0d7d1] bg-[#fff8f6] p-4"
+                        role="group"
+                      >
+                        <p
+                          className="text-sm font-medium text-brand-dark"
+                          id={`remove-book-${book.id}`}
+                        >
+                          Remove &quot;{book.title}&quot; from your shelf?
+                        </p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <button
+                            className="min-h-10 rounded-full border border-line px-4 py-2 text-sm font-semibold text-brand-dark transition hover:bg-white"
+                            onClick={() => setConfirmingBookId(null)}
+                            type="button"
+                          >
+                            Keep book
+                          </button>
+                          <button
+                            className="min-h-10 rounded-full bg-[#913f31] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#783428] disabled:cursor-not-allowed disabled:opacity-60"
+                            disabled={deletingBookId === book.id}
+                            onClick={() => void handleDelete(book)}
+                            type="button"
+                          >
+                            {deletingBookId === book.id ? "Removing..." : "Remove book"}
+                          </button>
+                        </div>
+                      </div>
                     )}
                   </>
                 )}
